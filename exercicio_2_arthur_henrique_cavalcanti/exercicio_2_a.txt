@@ -1,0 +1,196 @@
+create table pessoa(
+	ssn int primary key,
+	pnome varchar(50),
+	minicial varchar(50),
+	unome varchar(50),
+	dnasc date,
+	sexo char(1),
+	num int,
+	rua varchar(50),
+	numapto varchar(25),
+	cidade varchar(50),
+	estado varchar(2),
+	cep varchar(20),
+);
+
+create table aluno(
+	ssn int primary key,
+	turma varchar(25),
+	foreign key (ssn) references pessoa
+);
+
+create table docente(
+	ssn int primary key,
+	escritorio varchar(25),
+	categoria varchar(25),
+	salario varchar(25),
+	ffone varchar(20),
+	foreign key(ssn) references pessoa
+);
+
+create table formacao(
+	codf int primary key,
+	faculdade varchar(25),
+	grau varchar(25),
+	ano varchar(25)
+);
+
+create table aluno_grad(
+	ssn int primary key,
+	foreign key(ssn) references aluno
+);
+
+create table aluno_formacao(
+	codaluno_formacao int primary key,
+	codf int,
+	ssn int,
+	foreign key(codf)  references formacao,
+	foreign key(ssn) references aluno_grad
+);
+
+create table orientador(
+	codo int primary key,
+	ssn_docente int,
+	ssn_aluno_grad int,
+	foreign key(ssn_docente) references docente,
+	foreign key(ssn_aluno_grad) references aluno_grad
+);
+
+create table banca(
+	codb int primary key,
+	ssn_docente int,
+	ssn_aluno_grad int,
+	foreign key(ssn_docente) references docente,
+	foreign key(ssn_aluno_grad) references aluno_grad
+);
+
+create table bolsa (
+	num int primary key,
+	titulo varchar(25),
+	agencia varchar(25),
+	datain date
+);
+
+create table departamento(
+	dnome varchar(25) primary key,
+	dfone varchar(20),
+	escritorio varchar(25)
+);
+
+create table pertence(
+	id_pertence int primary key,
+	dep varchar(25),
+	ssn int,
+	foreign key(dep) references departamento,
+	foreign key(ssn) references docente
+);
+
+create table faculdade(
+	fnome varchar(25) primary key,
+	escritorio varchar(25),
+	reitor varchar(25)
+);
+
+create table fdept(
+	id_fdept int primary key,
+	faculdade varchar(25),
+	depart varchar(25),
+	foreign key(faculdade) references faculdade,
+	foreign key(depart) references departamento
+);
+
+create table curso(
+	id_curso int primary key,
+	unome varchar(25),
+	cdesc varchar(25),
+	dc varchar(25),
+	foreign key(dc) references departamento
+);
+
+drop table orientador;
+
+drop table fdept;
+
+alter table aluno_grad
+add orientador int;
+
+alter table aluno_grad
+add foreign key(orientador) references docente;
+
+alter table departamento
+add chefia int;
+
+alter table departamento
+add foreign key(chefia) references docente;
+
+alter table bolsa
+add ip int;
+
+alter table bolsa
+add foreign key(ip) references docente;
+
+create table instrutor_pesquisa(
+	id_intrutor int primary key,
+	dot int,
+	al_grad int,
+	foreign key(dot) references docente,
+	foreign key(al_grad) references aluno_grad
+);
+
+create table subsidio(
+	id_subsidio int primary key,
+	inicio date,
+	fim date,
+	prazo date,
+	instrutor int,
+	bolsa int,
+	foreign key(instrutor) references instrutor_pesquisa,
+	foreign key(bolsa) references bolsa
+);
+
+create table discplina(
+	disc int primary key,
+	ano int,
+	trimestre int,
+	ensinar int,
+	foreign key(ensinar) references instrutor_pesquisa
+);
+
+alter table instrutor_pesquisa
+add foreign key(id_intrutor) references pessoa;
+
+create table historico(
+	id_historico int primary key,
+	nota int,
+	discp int,
+	alu int,
+	foreign key(discp) references discplina,
+	foreign key(alu) references aluno
+);
+
+alter table aluno
+add habilita varchar(25);
+
+alter table aluno
+add foreign key(habilita) references departamento;
+
+alter table aluno
+add opta varchar(25);
+
+alter table aluno
+add foreign key(opta) references departamento;
+
+create table disciplina_corrente(
+	disc int primary key,
+	trimestre_corrente int,
+	ano_corrente int,
+	foreign key(disc) references discplina
+);
+
+create table registrado(
+	reg int primary key,
+	al int,
+	disc_corrente int,
+	foreign key(al) references aluno,
+	foreign key(disc_corrente) references disciplina_corrente
+);
